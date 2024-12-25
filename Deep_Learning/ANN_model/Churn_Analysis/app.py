@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import numpy as np
 import tensorflow as tf
@@ -5,21 +6,27 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
 import pandas as pd
 import pickle
 
+# Define the base directory (location of app.py)
+base_dir = os.path.dirname(__file__)
+
 # Load the trained model
-model = tf.keras.models.load_model('model.h5')
+model_path = os.path.join(base_dir, 'model.h5')
+model = tf.keras.models.load_model(model_path)
 
 # Load the encoders and scaler
-with open('label_encoder_gender.pkl', 'rb') as file:
+label_encoder_gender_path = os.path.join(base_dir, 'label_encoder_gender.pkl')
+with open(label_encoder_gender_path, 'rb') as file:
     label_encoder_gender = pickle.load(file)
 
-with open('one_hot_encoder_geography.pkl', 'rb') as file:
+onehot_encoder_geo_path = os.path.join(base_dir, 'one_hot_encoder_geography.pkl')
+with open(onehot_encoder_geo_path, 'rb') as file:
     onehot_encoder_geo = pickle.load(file)
 
-with open('scaler.pkl', 'rb') as file:
+scaler_path = os.path.join(base_dir, 'scaler.pkl')
+with open(scaler_path, 'rb') as file:
     scaler = pickle.load(file)
 
-
-## streamlit app
+# Streamlit app
 st.title('Customer Churn Prediction')
 
 # User input
@@ -56,7 +63,6 @@ input_data = pd.concat([input_data.reset_index(drop=True), geo_encoded_df], axis
 
 # Scale the input data
 input_data_scaled = scaler.transform(input_data)
-
 
 # Predict churn
 prediction = model.predict(input_data_scaled)
