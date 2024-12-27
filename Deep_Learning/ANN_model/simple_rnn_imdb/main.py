@@ -6,7 +6,7 @@ from tensorflow.keras.models import load_model
 import streamlit as st
 
 # Define the base directory (location of main.py)
-base_dir = os.path.dirname(__file__)
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Load the trained model
 model_path = os.path.join(base_dir, 'simple_rnn_imdb.h5')
