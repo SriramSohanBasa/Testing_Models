@@ -1,24 +1,20 @@
 import os
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.datasets import imdb
 from tensorflow.keras.preprocessing import sequence
 from tensorflow.keras.models import load_model
 import streamlit as st
 
-# Dynamically resolve the path to the model
-current_dir = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.join(current_dir, 'simple_rnn_imdb.h5')
+# Define the base directory (location of main.py)
+base_dir = os.path.dirname(__file__)
+
+# Load the trained model
+model_path = os.path.join(base_dir, 'simple_rnn_imdb.h5')
+model = tf.keras.models.load_model(model_path)
 
 # Load the IMDB dataset word index
-word_index = imdb.get_word_index()
+word_index = tf.keras.datasets.imdb.get_word_index()
 reverse_word_index = {value: key for key, value in word_index.items()}
-
-# Load the pre-trained model with ReLU activation
-try:
-    model = load_model(model_path)
-except FileNotFoundError:
-    st.error(f"Model file not found at {model_path}. Please ensure the file exists.")
 
 # Helper Functions
 def decode_review(encoded_review):
@@ -45,7 +41,10 @@ user_input = st.text_area('Movie Review')
 
 if st.button('Classify'):
     if user_input.strip():
+        # Preprocess the user input
         preprocessed_input = preprocess_text(user_input)
+
+        # Make prediction
         prediction = model.predict(preprocessed_input)
         sentiment = 'Positive' if prediction[0][0] > 0.5 else 'Negative'
 
